@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login System</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Montserrat", sans-serif;
+      }
+      body {
+        background: linear-gradient(to right, #021024, #5483b3);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .nav-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .nav-button {
+        background-color: #eee;
+        border: none;
+        padding: 10px 20px;
+        margin: 0 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+        font-weight: 600;
+      }
+      .nav-button.active {
+        background-color: #052659;
+        color: #fff;
+      }
+      .container {
+        background-color: #fff;
+        border-radius: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+        position: relative;
+        overflow: hidden;
+        width: 800px;
+        max-width: 100%;
+        min-height: 480px;
+      }
+      .container p {
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.3px;
+        margin: 20px 0px;
+      }
+      .container span {
+        font-size: 12px;
+      }
+      .container a {
+        color: #333;
+        font-size: 11px;
+        text-decoration: none;
+        margin: 15px 0 10px;
+      }
+      .container button {
+        background-color: #052659;
+        color: #fff;
+        font-size: 12px;
+        padding: 10px 45px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-top: 10px;
+        cursor: pointer;
+      }
+      .container button.hidden {
+        background-color: transparent;
+        border-color: #fff;
+      }
+      .container form {
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 0 40px;
+        height: 100%;
+      }
+
+      .container input {
+        background-color: #eee;
+        border: none;
+        margin: 8px 0;
+        padding: 10px 15px;
+        font-size: 13px;
+        border-radius: 8px;
+        width: 100%;
+        outline: none;
+      }
+      .form-container {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        transition: all 0.6s ease-in-out;
+      }
+      .sign-in {
+        left: 0;
+        width: 50%;
+        z-index: 2;
+      }
+      .container.active .sign-in {
+        transform: translateX(100%);
+      }
+      .sign-up {
+        left: 0;
+        width: 50%;
+        opacity: 0;
+        z-index: 1;
+      }
+      .container.active .sign-up {
+        transform: translateX(100%);
+        opacity: 1;
+        z-index: 5;
+        animation: move 0.6s;
+      }
+      @keyframes move {
+        0%,
+        49.99% {
+          opacity: 0;
+          z-index: 1;
+        }
+        50%,
+        100% {
+          opacity: 1;
+          z-index: 5;
+        }
+      }
+      .toggle-container {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 50%;
+        height: 100%;
+        overflow: hidden;
+        transition: all 0.6s ease-in-out;
+        border-radius: 150px 0 0 100px;
+        z-index: 1000;
+      }
+
+      .container.active .toggle-container {
+        transform: translatex(-100%);
+        border-radius: 0 150px 100px 0;
+      }
+      .toggle {
+        background-color: #512da8;
+        height: 100%;
+        background: linear-gradient(to right, #512da8, #5483b3);
+        color: #fff;
+        position: relative;
+        left: -100%;
+        height: 100%;
+        width: 200%;
+        transform: translateX(0);
+        transition: all 0.6s ease-in-out;
+      }
+      .toggle-panel {
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 0 30px;
+        text-align: center;
+        top: 0;
+        transform: translateX(0);
+        transition: all 0.6s ease-in-out;
+      }
+      .toggle-left {
+        transform: translateX(-200%);
+      }
+      .container.active .toggle-left {
+        transform: translateX(100%);
+      }
+      .toggle-right {
+        right: 0;
+        transform: translateX(0);
+      }
+      .container.active .toggle-right {
+        transform: translateX(200%);
+      }
+
+      form {
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 0 50px;
+        height: 100%;
+        text-align: center;
+      }
+      h1 {
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      p {
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 20px;
+        letter-spacing: 0.5px;
+        margin: 20px 0 30px;
+      }
+      input {
+        background-color: #eee;
+        border: none;
+        padding: 12px 15px;
+        margin: 8px 0;
+        width: 100%;
+        border-radius: 5px;
+      }
+      button {
+        background-color: #052659;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 12px 45px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: transform 0.1s ease-in;
+      }
+      button:active {
+        transform: scale(0.95);
+      }
+      button.toggle-btn {
+        background-color: transparent;
+        border: 1px solid #fff;
+      }
+      a {
+        color: #333;
+        font-size: 14px;
+        text-decoration: none;
+        margin: 15px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav-bar">
+      <button class="nav-button active" data-type="admin">Admin</button>
+      <button class="nav-button" data-type="client">Client</button>
+      <button class="nav-button" data-type="staff">Staff</button>
+    </nav>
+    <div class="container" id="container">
+      <div class="form-container sign-up">
+        <form action="add" method="post">
+          {% csrf_token %}
+          <h1 id="signup-title">Create Account</h1>
+          <input type="text" placeholder="Name" required aria-label="Name" />
+          <input type="email" placeholder="Email" required aria-label="Email" />
+          <input
+            type="password"
+            placeholder="Password"
+            required
+            aria-label="Password"
+          />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            required
+            aria-label="Confirm Password"
+          />
+          <button type="submit">Sign Up</button>
+        </form>
+      </div>
+      <div class="form-container sign-in">
+        <form action="submit" method="post">
+          {% csrf_token %}
+          <h1 id="signin-title">Sign In</h1>
+          <input type="email" placeholder="Email" required aria-label="Email" />
+          <input
+            type="password"
+            placeholder="Password"
+            required
+            aria-label="Password"
+          />
+          <a href="#">Forgot your password?</a>
+          <button type="submit">Sign In</button>
+        </form>
+      </div>
+      <div class="toggle-container">
+        <div class="toggle">
+          <div class="toggle-panel toggle-left">
+            <h1>Welcome Back!</h1>
+            <p>
+              To keep connected with us please login with your personal info
+            </p>
+            <button class="toggle-btn" id="login">Sign In</button>
+          </div>
+          <div class="toggle-panel toggle-right">
+            <h1>Hello, Friend!</h1>
+            <p>Enter your personal details and start journey with us</p>
+            <button class="toggle-btn" id="register">Sign Up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const container = document.getElementById("container");
+      const registerBtn = document.getElementById("register");
+      const loginBtn = document.getElementById("login");
+      const navButtons = document.querySelectorAll(".nav-button");
+      const signupTitle = document.getElementById("signup-title");
+      const signinTitle = document.getElementById("signin-title");
+
+      registerBtn.addEventListener("click", () => {
+        container.classList.add("active");
+      });
+
+      loginBtn.addEventListener("click", () => {
+        container.classList.remove("active");
+      });
+
+      navButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          navButtons.forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
+          const userType = button.getAttribute("data-type");
+          updateTitles(userType);
+        });
+      });
+
+      function updateTitles(userType) {
+        const capitalizedUserType =
+          userType.charAt(0).toUpperCase() + userType.slice(1);
+        signupTitle.textContent = `Create ${capitalizedUserType} Account`;
+        signinTitle.textContent = `${capitalizedUserType} Sign In`;
+      }
+    </script>
+  </body>
+</html>
